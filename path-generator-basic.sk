@@ -1,0 +1,88 @@
+# CREDIT GOES TO ZYHRIZ FOR MAKING THE ORIGINAL CODE
+# https://github.com/Zyhriz/skript-projects
+# .Zyhriz on Minehut
+# @zyhriz on TikTok
+# KEEP THIS TEXT HERE TO RESPECT THE LICENSE, PLEASE
+# THANK YOU
+
+options:
+	turn-chance: 40%
+	turn-angle: 15
+	follow-curve-bias: 20%
+	# follow-curve-bias is an extra chance (added to the 50%) that the turn-angle will be in the same direction as the previous. e.g. if the path previously turned left, it has a higher chance to turn left again.
+	#set to 0 for no curve bias
+	default-curve-direction: 1
+	# 1 = right. -1 = left
+	branch-chance: 1%
+	step-length: 1
+	wait-every: 100
+	# will wait VV ticks every ^^
+	wait-time: 1
+
+command /generatepath [<number>] [<number>] [<number>]:
+	permission: *
+	usage: /generatepath [path size] [path range] [number of steps]
+	trigger:
+		set {_1} to arg-1 if arg-1 is set else 1
+		set {_2} to arg-2 if arg-2 is set else 50
+		set {_3} to arg-3 if arg-3 is set else 500
+		startPath(player, {_1}, {_2}, {_3})
+
+function startPath(exec: player, pathRadius: number = 1, range: number = 50, pathSteps: integer = 500):
+
+	#example: startPath(player, 0.5, 50, 5)
+	#initialize armor stand
+	spawn 1 armor stand at location of {_exec}
+	set {_joe.swanson} to last spawned armor stand
+	set gravity of {_joe.swanson} to off
+	set name of {_joe.swanson} to "Joe Swanson"
+	set helmet of {_joe.swanson} to leather cap
+	
+	set {_start} to location of {_joe.swanson}
+	add 1 to y-coordinate of {_start}
+	set pitch of {_start} to 0
+	set {_yaw} to (random integer between 1 and (360/{@turn-angle}))*{@turn-angle}
+	set yaw of {_start} to {_yaw}
+	teleport {_joe.swanson} to {_start}
+	set {_last.turn} to {@default-curve-direction}
+	set {_pastLocations::*} to {_start}
+	set {_now} to now
+	
+	# main loop
+	loop {_pathSteps} times:
+		set location of {_next.step} to location of {_joe.swanson}
+		
+		#checking if it should wait
+		if mod(loop-number, {@wait-every}) = 0:
+			wait "{@wait-time} ticks" parsed as timespan
+		
+		#chance to branch
+		chance of {@branch-chance}:
+			set {_next.step} to random element out of {_pastLocations::*}
+			add 1 to {_branched}
+		
+		#branch if position is out of range
+		if distance between {_joe.swanson} and {_start} is greater than {_range}:
+			set {_next.step} to random element out of {_pastLocations::*}
+			add 1 to {_branched}
+		
+		#turning
+		chance of {@turn-chance}:
+			if random number between 0 and 1 > (50% + {@follow-curve-bias}):
+				#if it *wont* follow the curve
+				set {_last.turn} to {_last.turn} * -1
+			add {@turn-angle} * {_last.turn} to yaw of {_next.step}
+			add {@turn-angle} to {_deg.turned}
+		
+		set location of {_next.step} to location {@step-length} meters in front of {_next.step}
+		teleport {_joe.swanson} to {_next.step}
+		add location of {_joe.swanson} to {_pastLocations::*}
+		
+		loop blocks in radius {_pathRadius} of {_joe.swanson}:
+			set loop-block to pink wool
+	
+	kill {_joe.swanson}
+	send "&bFinished!" to {_exec}
+	send "&9Time taken: &f%difference between {_now} and now%" to {_exec}
+	send "&9Times branched: &f%{_branched}%" to {_exec}
+	send "&9Degrees turned: &f%{_deg.turned}%" to {_exec}
