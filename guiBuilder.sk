@@ -1,0 +1,168 @@
+# REQUIRES SKUTILITIES
+# MADE BY @zyhriz ON TIKTOK
+# DO NOT REMOVE THIS CREDIT INFORMATION
+
+# Creates the skript formatting for a gui based off of an ingame gui
+# Use /guibuilder for info
+# Uses metadata
+
+options:
+	file-name: my-gui.txt
+	directory: plugins/Skript/scripts/
+	
+	
+	staff-perm: dev.guibuild
+	perm-msg: &cInsufficient permission.
+	
+	staff-prefix: &6guiBuilder&f
+	
+	prefix: &6guiBuilder&f
+	
+	# change this if you, for some reason, are having issues with metadata tags being overwritten by this file.
+	sample-gui-metadata-tag: samplegui
+	closing-prompt: closingguiprompt
+
+# GENERAL STUFF
+
+function guiStaffMessage(msg: text):
+	loop all players: #i need to loop bc 'all players' doesnt like being used in functs.
+		loop-player has permission "{@staff-perm}"
+		send "{@staff-prefix} %{_msg}%" to loop-player
+
+command /guibuilder:
+	permission: {@staff-perm}
+	permission message: {@perm-msg}
+	trigger:
+		send "{@prefix} Using this script is as easy as 1 through 5!"
+		send "{@prefix} 1. Use /opensamplegui"
+		send "{@prefix} 2. Insert the items you want to be in the gui"
+		send "{@prefix} 3. Close the inventory"
+		send "{@prefix} 4. Fill out the information"
+		send "{@prefix} 5. Copy the information from the text file"
+		send "{@prefix} Made by @zyhriz."
+
+# INITIALIZATION
+
+on load:
+	set {-guifile} to "{@directory}{@file-name}"
+	delete {-gui.expecting.answer}
+	
+	wait 1 tick # used incase the server has a reload broadcast system. prevents weird message orders
+	if file {-guifile} doesn't exist:
+		guiStaffMessage("File named {@file-name} doesn't exist. Creating a new one.")
+		create file {-guifile}
+		guiStaffMessage("File named {@file-name} created in folder {@directory}.")
+	else:
+		guiStaffMessage("File named {@file-name} already exists. Do you want to clear it automatically? &7(Anyone receiving this message can type y or n to respond.)")
+		guiStaffMessage("This prompt will decay in 10 seconds, and assume no.")
+		set {-gui.expecting.answer} to now
+
+on chat: #responding to prompts
+	player has permission "{@staff-prefix}"
+	difference between {-gui.expecting.answer} and now is less than 10 seconds
+	if message is "y":
+		cancel event
+		delete {-gui.expecting.answer}
+		guiStaffMessage("Got it. Wiping the file.")
+		delete file {-guifile}
+		create file {-guifile}
+		guiStaffMessage("Done!")
+	else if message is "n":
+		cancel event
+		delete {-gui.expecting.answer}
+		guiStaffMessage("Okay, the file won't be wiped.")
+
+# INVENTORY STUFF
+
+command /opensamplegui [<integer>]:
+	permission: {@staff-perm}
+	permission message: {@perm-msg}
+	usage: /opensamplegui [rows]
+	trigger:
+		set {_r} to arg ? 6
+		set metadata tag "{@sample-gui-metadata-tag}" of player to chest inventory with {_r} rows named "Sample Gui (Insert Items)"
+		open metadata tag "{@sample-gui-metadata-tag}" of player to player
+
+inventory close:
+	event-inventory is metadata tag "{@sample-gui-metadata-tag}" of player
+	send "{@prefix} What should this gui be called? (Type 'cancel' at any time to cancel.)"
+	set {-gui.tobesaved::%player%} to event-inventory
+	set metadata tag "{@closing-prompt}" of player to 1
+
+on chat:
+	player has permission "{@staff-perm}"
+	set {_n} to metadata tag "{@closing-prompt}" of player
+	{_n} is set
+	cancel event
+	if message is "cancel":
+		delete metadata tag "{@closing-prompt}" of player
+		send "{@prefix} Got it. Cancelling the gui creation."
+		stop
+	if {_n} is 1:
+		set {-gui::%player%::1} to message
+		send "{@prefix} Great. The gui will be called (%message%). Now, what should the metadata tag be? This is what the gui will be stored as in the file."
+		set metadata tag "{@closing-prompt}" of player to 2
+	if {_n} is 2:
+		set {-gui::%player%::2} to message
+		send "{@prefix} Okay, the metadata tag will be referred to as (%message%). How many times should I indent it for you?"
+		set metadata tag "{@closing-prompt}" of player to 3
+	if {_n} is 3:
+		if "%message parsed as integer%" isn't message:
+			send "{@prefix} Uh oh, I think there was some error. You need to give me a positive integer. Again, this is the amount of times I'm going to indent this for you. Please try again, or use 'cancel' to cancel."
+			stop
+		if message parsed as integer is less than 0:
+			send "{@prefix} Uh oh, I think there was some error. You need to give me a positive integer. Again, this is the amount of times I'm going to indent this for you. Please try again, or use 'cancel' to cancel."
+			stop
+		set {-gui::%player%::3} to message parsed as integer
+		send "{@prefix} Got it. No further questions needed. I'm gonna notify all staff that I'm writing to a file, as it may take some time and resources. You should see that message below."
+		delete metadata tag "{@closing-prompt}" of player
+		wait 2 seconds
+		saveGui({-gui.tobesaved::%player%}, {-gui::%player%::1}, {-gui::%player%::2}, {-gui::%player%::3})
+
+# SAVING TO FILE
+
+function saveGui(inv: inventory, name: text = "My Gui", metadata: text = "myguismetadata", tabs: integer = 2):
+	guiStaffMessage("Hey! I've got a friend that needs to save a gui, so this might take some time. I'm just giving a heads-up, and I'll start shortly.")
+	wait 3 seconds
+	guiStaffMessage("Okay! I'm starting.")
+	
+	# initialization
+	set {_indent} to ""
+	loop {_tabs} times:
+		set {_indent} to "	%{_indent}%"
+	set {_nline} to 1
+	set {_f} to {-guifile}
+	
+	# main loop
+	loop items in {_inv}:
+		set {_slot} to index of loop-item
+		set {_item} to loop-item
+		delete lore of {_item}
+		set name of {_item} to "" #deletes the name
+		remove enchantments from {_item}
+		set {_lore::*} to lore of loop-item
+		set {_name} to name of loop-item
+		set {_ench::*} to enchantments of loop-item #
+		set {_line} to "set slot %{_slot}% of metadata tag ""%{_metadata}%"" of player to %{_item}%"
+		
+		if {_name} is set:
+			set {_line} to "%{_line}% named ""%{_name}%"""
+
+		if size of {_lore::*} is greater than 0:
+			set {_line} to "%{_line}% with lore"
+			loop size of {_lore::*} times:
+				if {_lore::%loop-number + 1%} is set:
+					set {_line} to "%{_line}% ""%{_lore::%loop-number%}%"" and"
+				else:
+					set {_line} to "%{_line}% ""%{_lore::%loop-number%}%"""
+		#set line {_nline} in file {-guifile} to "%{_indent}%%{_line}%"
+		write "%{_indent}%%{_line}%" at line {_nline} to file {-guifile}
+		add 2 to {_nline}
+
+		if size of {_ench::*} is greater than 0:
+			#set line {_nline} in file {-guifile} to "%{_indent}%enchant slot %{_slot}% of metadata tag ""%{_metadata}%"" of player with %loop-value%"
+			write "%{_indent}%enchant slot %{_slot}% of metadata tag ""%{_metadata}%"" of player with %loop-value%" at line {_nline} to file {-guifile}
+			add 1 to {_nline}
+		add 1 to {_nline}
+	
+	guiStaffMessage("Aaaaand, finished!")
