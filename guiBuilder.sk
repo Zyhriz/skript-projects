@@ -1,14 +1,8 @@
 # REQUIRES SKUTILITIES
-# MADE BY @zyhriz ON TIKTOK
-# DO NOT REMOVE THIS CREDIT INFORMATION
-
-# Creates the skript formatting for a gui based off of an ingame gui
-# Use /guibuilder for info
-# Uses metadata
 
 options:
 	file-name: my-gui.txt
-	directory: plugins/Skript/scripts/
+	directory: plugins/Skript/scripts/dev-tools/
 	
 	
 	staff-perm: dev.guibuild
@@ -82,6 +76,7 @@ command /opensamplegui [<integer>]:
 		set {_r} to arg ? 6
 		set metadata tag "{@sample-gui-metadata-tag}" of player to chest inventory with {_r} rows named "Sample Gui (Insert Items)"
 		open metadata tag "{@sample-gui-metadata-tag}" of player to player
+		set {-gui.rows::%player%} to {_r}
 
 inventory close:
 	event-inventory is metadata tag "{@sample-gui-metadata-tag}" of player
@@ -117,21 +112,26 @@ on chat:
 		send "{@prefix} Got it. No further questions needed. I'm gonna notify all staff that I'm writing to a file, as it may take some time and resources. You should see that message below."
 		delete metadata tag "{@closing-prompt}" of player
 		wait 2 seconds
-		saveGui({-gui.tobesaved::%player%}, {-gui::%player%::1}, {-gui::%player%::2}, {-gui::%player%::3})
+		saveGui({-gui.tobesaved::%player%}, {-gui::%player%::1}, {-gui::%player%::2}, {-gui::%player%::3}, {-gui.rows::%player%})
 
 # SAVING TO FILE
 
-function saveGui(inv: inventory, name: text = "My Gui", metadata: text = "myguismetadata", tabs: integer = 2):
+function saveGui(inv: inventory, name: text = "My Gui", metadata: text = "myguismetadata", tabs: integer = 2, rows: integer = 6):
 	guiStaffMessage("Hey! I've got a friend that needs to save a gui, so this might take some time. I'm just giving a heads-up, and I'll start shortly.")
 	wait 3 seconds
 	guiStaffMessage("Okay! I'm starting.")
 	
 	# initialization
+	
+	delete file {-guifile}
+	create file {-guifile}
 	set {_indent} to ""
 	loop {_tabs} times:
 		set {_indent} to "	%{_indent}%"
-	set {_nline} to 1
+	set {_nline} to 2
 	set {_f} to {-guifile}
+	
+	write "%{_indent}%set metadata tag ""%{_metadata}%"" of player to chest inventory with %{_rows}% rows named ""%{_name}%""" at line 1 to file {-guifile}
 	
 	# main loop
 	loop items in {_inv}:
@@ -161,8 +161,9 @@ function saveGui(inv: inventory, name: text = "My Gui", metadata: text = "myguis
 
 		if size of {_ench::*} is greater than 0:
 			#set line {_nline} in file {-guifile} to "%{_indent}%enchant slot %{_slot}% of metadata tag ""%{_metadata}%"" of player with %loop-value%"
-			write "%{_indent}%enchant slot %{_slot}% of metadata tag ""%{_metadata}%"" of player with %loop-value%" at line {_nline} to file {-guifile}
-			add 1 to {_nline}
+			loop {_ench::*}:
+				write "%{_indent}%enchant slot %{_slot}% of metadata tag ""%{_metadata}%"" of player with %loop-value-2%" at line {_nline} to file {-guifile}
+				add 1 to {_nline}
 		add 1 to {_nline}
 	
 	guiStaffMessage("Aaaaand, finished!")
