@@ -1,0 +1,67 @@
+# REQUIRES SKUTILITIES
+# CREDIT GOES TO @zyhriz
+# .ZYHRIZ ON MINEHUT
+# DO NOT REMOVE THIS CREDIT INFO
+
+options:
+	directory: plugins/Skript/scripts/databases/
+	filename: operatorhistory.txt
+	
+	prefix: &coperatorTracker.sk &f
+	permission: operatortracker
+
+on load:
+	set {-ot.file} to "{@directory}{@filename}"
+	wait 1 tick
+	if file {-ot.file} exists:
+		ot_staff("operatorTracker.sk loaded.")
+	else:
+		ot_staff("Looks like the required database isn't created. Making one now.")
+		set {_n} to now
+		create file {-ot.file}
+		ot_staff("Done. Took %time since {_n}%.")
+
+# FUNCTIONS
+
+function ot_staff(m: text):
+	loop all players:
+		loop-player has permission "{@permission}"
+		send "{@prefix}%{_m}%" to loop-player
+
+function ot_addHistory(m: text):
+	write "[%now%] %{_m}%" at line (line count of file {-ot.file} + 1) to file {-ot.file}
+
+# COMMAND TRACKING
+
+on command "/op":
+	set {_cmd::*} to split the full command at " "
+	{_cmd::2} is set
+	ot_addHistory("%player% ADDED // %{_cmd::2}%")
+
+on command "/minecraft:op":
+	set {_cmd::*} to split the full command at " "
+	{_cmd::2} is set
+	ot_addHistory("%player% ADDED // %{_cmd::2}%")
+
+on command "/deop":
+	set {_cmd::*} to split the full command at " "
+	{_cmd::2} is set
+	ot_addHistory("%player% REMOVED // %{_cmd::2}%")
+
+on command "/minecraft:deop":
+	set {_cmd::*} to split the full command at " "
+	{_cmd::2} is set
+	ot_addHistory("%player% REMOVED // %{_cmd::2}%")
+
+# COMMAND
+
+command /operatortracker:
+	trigger:
+		send "{@prefix}Running version v1.1"
+		send "{@prefix}Made by @zyhriz on tiktok."
+		send "{@prefix}github.com/Zyhriz/skript-projects/"
+		player has permission "{@permission}"
+		send "{@prefix}Stores op and deop commands in a designated file."
+		send "{@prefix}By default, it's stored in:"
+		send "&fplugins/Skript/scripts/databases/"
+		send "{@prefix}But that can be changed in the options section."
