@@ -28,7 +28,7 @@ function ot_staff(m: text):
 		loop-player has permission "{@permission}"
 		send "{@prefix}%{_m}%" to loop-player
 
-function ot_addHistory(p: text, cmd: text):
+function ot_addHistory(p: player, cmd: text):
 	set {_cmd::*} to split {_cmd} at " "
 	{_cmd::2} is set
 	if {_p} has permission "*":
@@ -39,27 +39,27 @@ function ot_addHistory(p: text, cmd: text):
 		set {_t} to "%{_t}%REMOVE"
 	else:
 		set {_t} to "%{_t}%ADD"
-	write "[%now%] %{_p}% %{_t}% // %{_cmd::2}%" at line (line count of file {-ot.file} + 1) to file {-ot.file}
+	write "[%now%] %{_p} ? "CONSOLE"% %{_t}% // %{_cmd::2}%" at line (line count of file {-ot.file} + 1) to file {-ot.file}
 
 # COMMAND TRACKING
 
 on command "/op":
-	ot_addHistory(name of player, the full command)
+	ot_addHistory(player, the full command)
 
 on command "/minecraft:op":
-	ot_addHistory(name of player, the full command)
+	ot_addHistory(player, the full command)
 
 on command "/deop":
-	ot_addHistory(name of player, the full command)
+	ot_addHistory(player, the full command)
 
 on command "/minecraft:deop":
-	ot_addHistory(name of player, the full command)
+	ot_addHistory(player, the full command)
 
 # COMMAND
 
 command /operatortracker:
 	trigger:
-		send "{@prefix}Running version v1.2"
+		send "{@prefix}Running version v1.3"
 		send "{@prefix}Made by @zyhriz on tiktok."
 		send "{@prefix}github.com/Zyhriz/skript-projects/"
 		player has permission "{@permission}"
