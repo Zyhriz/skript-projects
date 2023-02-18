@@ -28,36 +28,38 @@ function ot_staff(m: text):
 		loop-player has permission "{@permission}"
 		send "{@prefix}%{_m}%" to loop-player
 
-function ot_addHistory(m: text):
-	write "[%now%] %{_m}%" at line (line count of file {-ot.file} + 1) to file {-ot.file}
+function ot_addHistory(p: text, cmd: text):
+	set {_cmd::*} to split {_cmd} at " "
+	{_cmd::2} is set
+	if {_p} has permission "*":
+		set {_t} to ""
+	else:
+		set {_t} to "TRIED "
+	if {_cmd::1} contains "de":
+		set {_t} to "%{_t}%REMOVE"
+	else:
+		set {_t} to "%{_t}%ADD"
+	write "[%now%] %{_p}% %{_t}% // %{_cmd::2}%" at line (line count of file {-ot.file} + 1) to file {-ot.file}
 
 # COMMAND TRACKING
 
 on command "/op":
-	set {_cmd::*} to split the full command at " "
-	{_cmd::2} is set
-	ot_addHistory("%player% ADDED // %{_cmd::2}%")
+	ot_addHistory(name of player, the full command)
 
 on command "/minecraft:op":
-	set {_cmd::*} to split the full command at " "
-	{_cmd::2} is set
-	ot_addHistory("%player% ADDED // %{_cmd::2}%")
+	ot_addHistory(name of player, the full command)
 
 on command "/deop":
-	set {_cmd::*} to split the full command at " "
-	{_cmd::2} is set
-	ot_addHistory("%player% REMOVED // %{_cmd::2}%")
+	ot_addHistory(name of player, the full command)
 
 on command "/minecraft:deop":
-	set {_cmd::*} to split the full command at " "
-	{_cmd::2} is set
-	ot_addHistory("%player% REMOVED // %{_cmd::2}%")
+	ot_addHistory(name of player, the full command)
 
 # COMMAND
 
 command /operatortracker:
 	trigger:
-		send "{@prefix}Running version v1.1"
+		send "{@prefix}Running version v1.2"
 		send "{@prefix}Made by @zyhriz on tiktok."
 		send "{@prefix}github.com/Zyhriz/skript-projects/"
 		player has permission "{@permission}"
