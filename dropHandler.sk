@@ -1,0 +1,287 @@
+# VISUAL BASED DROPS SYSTEM
+# Intended to work on MushRPG.minehut.gg, so it might not work exactly on your own server. Tinker with it.
+# CREDIT GOES TO @zyhriz
+# github.com/Zyhriz/skript-projects
+# Untested and unoptimized.
+
+options:
+	hologramsOnDrop: false
+	rewardActionBar: true
+	xpAndMoneyRewards: false
+	itemRewards: true
+	notifyItemReward: true
+	reopenDropsPage: true #reopens the specific mob menu page after inputting a value
+	reopenMobsPage: true #reopens the mob select page after mob delete or register
+	staffperm: sk.drophandler.admin
+	permMessage: &cInsufficient permission.
+	prefix: &bdropHandler&f
+	
+	metadatatag: drophandlergui
+
+# MISC FUNCTIONS
+
+function pageElementToSlot(elem: integer) :: integer:
+	set {_return} to 2 * floor(({_elem} - 0.9)/7)
+	set {_return} to {_elem} + {_return} + 9
+	return floor({_return})
+
+function slotToPageElement(elem: integer) :: integer:
+	set {_return} to 2 * floor(({_elem} - 0.9)/9)
+	set {_return} to {_elem} - {_return} - 7
+	return floor({_return})
+
+# INITIALIZATION
+
+load:
+	delete {-dh.ppage::*} #player page
+
+#{-dh.ppage::*} = playerpage (int)
+#{dh.mobs::*} = mob icon (item)
+
+# MAIN GUI
+
+function dropHandlerNewMainPage(P: player):
+	set metadata tag "{@metadatatag}main" of {_P} to chest inventory with 6 rows named "&bdropHandler.sk"
+	set slot (integers between 0 and 54) of metadata tag "{@metadatatag}main" of {_P} to air
+	set slot (integers between 0 and 8) and (integers between 46 and 52) of metadata tag "{@metadatatag}main" of {_P} to gray stained glass pane named " "
+	set slot 9 and 17 and 36 and 44 of metadata tag "{@metadatatag}main" of {_P} to gray stained glass pane named " "
+	
+	set slot 45 of metadata tag "{@metadatatag}main" of {_P} to red wool named "&cExit"
+	set slot 53 of metadata tag "{@metadatatag}main" of {_P} to lime wool named "&aRegister New Mob"
+	open metadata tag "{@metadatatag}main" of {_P} to {_P}
+		
+	if size of {dh.mobs::*} isn't greater than {-dh.ppage::%{_P}%}*28:
+		set slot 26 and 35 of metadata tag "{@metadatatag}main" of {_P} to white stained glass pane named " &f>>> "
+	else:
+		set slot 26 and 35 of metadata tag "{@metadatatag}main" of {_P} to light blue stained glass pane named " &b>>> "
+	if {-dh.ppage::%{_P}%} = 1:
+		set slot 18 and 27 of metadata tag "{@metadatatag}main" of {_P} to white stained glass pane named " &7<<< "
+	else:
+		set slot 18 and 27 of metadata tag "{@metadatatag}main" of {_P} to light blue stained glass pane named " &b<<< "
+		
+		
+	set {_i} to ({-dh.ppage::%{_P}%} - 1)*28#iterator
+	loop 28 times:
+		add 1 to {_i} #page 1: 1. page 2: 29
+		set slot pageElementToSlot({_i}) of metadata tag "{@metadatatag}main" of {_P} to {dh.mobs::%{_i}%}
+		#send {dh::mobs::%{_i}%} to {_P}
+
+command /drophandler [<text>]:
+	usage: /drophandler [-h|help]
+	trigger:
+		if arg is "-h" or "help":
+			send "{@prefix} Created by @zyhriz (v0.4)"
+			send "{@prefix} Makes setting up custom mobs 10x easier!"
+			stop
+		if player doesn't have permission "{@staffperm}":
+			send "{@permMessage}"
+			stop
+		
+		set {-dh.ppage::%player%} to 1
+		dropHandlerNewMainPage(player)
+		
+		
+
+on inventory click:
+	event-inventory = metadata tag "{@metadatatag}main" of player
+	play sound "block.note_block.hat" to player
+	cancel event
+	if event-slot is gray stained glass pane:
+		stop
+	if index of event-slot = 45:
+		close player's inventory
+	if index of event-slot = 53:
+		close player's inventory
+		send "{@prefix} Right click a mob to register them! Left click to cancel. &7(You might need to hold something for right clicks to register)."
+		set {-dh.selectingmob::%player%} to true
+	if {dh.mobs::%slotToPageElement(index of event-slot)%} is set:
+		close player's inventory
+		loadDropsPage(player, slotToPageElement(index of event-slot))
+
+# MOB DROPS GUI
+
+#{dh.mobs::index}
+function loadDropsPage(P: player, mob: integer):
+	set metadata tag "{@metadatatag}page" of {_P} to chest inventory with 6 rows named "&bdropHandler.sk"
+	
+	set slot (integers between 0 and 8) and (integers between 45 and 53) of metadata tag "{@metadatatag}page" of {_P} to gray stained glass pane named " "
+	set slot 9 and 18 and 27 and 36 and 17 and 26 and 35 and 44 of metadata tag "{@metadatatag}page" of {_P} to gray stained glass pane named " "
+	
+	set slot 45 of metadata tag "{@metadatatag}page" of {_P} to red wool named "&cBack"
+	set slot 53 of metadata tag "{@metadatatag}page" of {_P} to orange stained glass pane named "&6Delete Mob"
+	set slot 1 of metadata tag "{@metadatatag}page" of {_P} to yellow stained glass pane named "&eLow: $%{dh.mobs::%{_mob}%::mlow} ? 0%"
+	set slot 2 of metadata tag "{@metadatatag}page" of {_P} to yellow stained glass pane named "&eHigh: $%{dh.mobs::%{_mob}%::mhigh} ? 0%"
+	set slot 3 of metadata tag "{@metadatatag}page" of {_P} to light blue stained glass pane named "&bLow: %{dh.mobs::%{_mob}%::xlow} ? 0%"
+	set slot 4 of metadata tag "{@metadatatag}page" of {_P} to light blue stained glass pane named "&bHigh: %{dh.mobs::%{_mob}%::xhigh} ? 0%"
+	
+	loop indices of {dh.mobs::%{_mob}%::items::*}:
+		set slot pageElementToSlot(loop-value parsed as integer) of metadata tag "{@metadatatag}page" of {_P} to {dh.mobs::%{_mob}%::items::%loop-value%}
+	
+	open metadata tag "{@metadatatag}page" of {_P} to {_P}
+	set metadata tag "{@metadatatag}mob" of {_P} to {_mob}
+
+inventory click:
+	player's current inventory is metadata tag "{@metadatatag}page" of player
+	cancel event
+	set {_mob} to metadata tag "{@metadatatag}mob" of player
+	if event-inventory is metadata tag "{@metadatatag}page" of player:
+		if event-slot is gray stained glass pane:
+			stop
+		if index of event-slot is 45:
+			close player's inventory
+			{@reopenMobsPage} is true
+			wait 1 tick
+			dropHandlerNewMainPage(player)
+			stop
+		if index of event-slot is 53:
+			close player's inventory
+			delete {dh.mobs::%{_mob}%::items::*}
+			delete {dh.mobs::%{_mob}%::*}
+			delete {dh.mobs::%{_mob}%}
+			send "{@prefix} Got it. Mob has been deleted."
+			{@reopenMobsPage} is true
+			wait 1 tick
+			dropHandlerNewMainPage(player)
+			stop
+		if index of event-slot is 1:
+			close player's inventory
+			set {-dh.prompt::%player%} to "mlow"
+			send "{@prefix} Type in a value for the &elow money reward&f. The current value is $%{dh.mobs::%{_mob}%::mlow} ? 0%."
+		else if index of event-slot is 2:
+			close player's inventory
+			set {-dh.prompt::%player%} to "mhigh"
+			send "{@prefix} Type in a value for the &ehigh money reward&f. The current value is $%{dh.mobs::%{_mob}%::mhigh} ? 0%."
+		else if index of event-slot is 3:
+			close player's inventory
+			set {-dh.prompt::%player%} to "xlow"
+			send "{@prefix} Type in a value for the &blow xp reward&f. The current value is %{dh.mobs::%{_mob}%::xlow} ? 0%."
+		else if index of event-slot is 4:
+			close player's inventory
+			set {-dh.prompt::%player%} to "xhigh"
+			send "{@prefix} Type in a value for the &bhigh xp reward&f. The current value is %{dh.mobs::%{_mob}%::xhigh} ? 0%."
+		else: # mob drop item [Check]
+			close player's inventory
+			loop indices of {dh.mobs::%{_mob}%::items::*}:
+				{dh.mobs::%{_mob}%::items::%loop-value%} is event-slot
+				set {-dh.dc::%player%} to {dh.mobs::%{_mob}%::items::%loop-value%::chance}
+				delete {dh.mobs::%{_mob}%::items::%loop-value%::chance}
+				delete {dh.mobs::%{_mob}%::items::%loop-value%}
+			wait 1 tick
+			editItem(player, event-slot, {_mob})
+	else if event-inventory is player's inventory: #player's inventory
+		if size of {dh.mobs::%{_mob}%::items::*} is 28:
+			close player's inventory
+			send "{@prefix} There's too many items for this mob!"
+			stop
+		else:
+			editItem(player, event-slot, {_mob})
+		
+chat:
+	{-dh.prompt::%player%} is "mlow" or "mhigh" or "xlow" or "xhigh"
+	set {_mob} to metadata tag "{@metadatatag}mob" of player
+	cancel event
+	if message parsed as number isn't set:
+		delete {-dh.prompt::%player%}
+		send "{@prefix} Uh oh, it appears you didn't type in a number. I'm going to assume you meant to cancel that."
+		stop
+	if {_mob} isn't set:
+		send "{@prefix} It appears there's an unexpected error here. Try again?"
+		stop
+	set {dh.mobs::%{_mob}%::%{-dh.prompt::%player%}%} to message parsed as number
+	send "{@prefix} Got it. It's now set to %message parsed as number%."
+	{@reopenDropsPage}
+	loadDropsPage(player, {_mob})
+	delete {-dh.prompt::%player%}
+	
+# EDIT ITEM GUI
+
+function editItem(P: player, item: item, mob: integer):
+	set metadata tag "{@metadatatag}item" of {_P} to dispenser inventory named "&bdropHandler.sk"
+	set metadata tag "{@metadatatag}editingitem" of {_P} to {_item}
+	
+	set slot (integers between 0 and 8) of metadata tag "{@metadatatag}item" of {_P} to gray stained glass pane named " "
+	set slot 1 of metadata tag "{@metadatatag}item" of {_P} to white stained glass pane named "&fChance to Drop: %{-dh.dc::%{_P}%} ? 0%"
+	set slot 4 of metadata tag "{@metadatatag}item" of {_P} to {_item}
+	set slot 7 of metadata tag "{@metadatatag}item" of {_P} to lime wool named "&aConfirm"
+	
+	open metadata tag "{@metadatatag}item" of {_P} to {_P}
+
+inventory click:
+	event-inventory = metadata tag "{@metadatatag}item" of player
+	set {_mob} to metadata tag "{@metadatatag}mob" of player
+	cancel event
+	{_mob} is set
+	if event-slot = 1:
+		close player's inventory
+		send "{@prefix} Input a value for the chance to drop this item."
+		set {-dh.prompt::%player%} to "chance"
+	if event-slot is 4:
+		give player event-slot
+		close player's inventory
+		delete {-dh.dc::%player%}
+		delete metadata tag "{@metadatatag}editingitem" of player
+	if event-slot = 7:
+		close player's inventory
+		loop 28 times:
+			{dh.mobs::%{_mob}%::items::%loop-number%} isn't set
+			set {dh.mobs::%{_mob}%::items::%loop-number%} to metadata tag "{@metadatatag}editingitem" of player
+			set {dh.mobs::%{_mob}%::items::%loop-number%::chance} to {-dh.dc::%player%} if {-dh.dc::%player%} is set else 0
+			delete {-dh.dc::%player%}
+			loadDropsPage(player, {_mob})
+			stop
+		
+on chat:
+	{-dh.prompt::%player%} is "chance"
+	cancel event
+	set {_mob} to metadata tag "{@metadatatag}mob" of player
+	set {_item} to metadata tag "{@metadatatag}editingitem" of player
+	if message parsed as number isn't set:
+		send "{@prefix} You need to type in a number. Reopening GUI."
+		editItem(player, {_item}, {_mob})
+		stop
+	set {-dh.dc::%player%} to message parsed as number
+	editItem(player, {_item}, {_mob})
+	delete {-dh.prompt::%player%}
+
+# REGISTRATION
+
+on arm swing:
+	{-dh.selectingmob::%player%} is true
+	delete {-dh.selectingmob::%player%}
+	cancel event
+	send "{@prefix} Mob registration cancelled."
+
+right click on mob:
+	{-dh.selectingmob::%player%} is true
+	cancel event
+	delete {-dh.selectingmob::%player%}
+	add gray wool named name of target entity with lore "%type of target entity%" to {dh.mobs::*}
+	send "{@prefix} Got it! Mob registered." to player
+	{@reopenMobsPage} is true
+	dropHandlerNewMainPage(player)
+
+# DROPS
+
+death:
+	attacker is player
+	loop indices of {dh.mobs::*}:
+		name of {dh.mobs::%loop-value%} = name of victim
+		uncolored line 1 of lore of {dh.mobs::%loop-value%} = "%victim%" # should return type [Check]
+		set {_mob} to loop-value
+	{_mob} is set
+	if {@xpAndMoneyRewards} is true:
+		set {_m} to random integer between {dh.mobs::%{_mob}%::mlow} and {dh.mobs::%{_mob}%::mhigh}
+		set {_x} to random integer between {dh.mobs::%{_mob}%::xlow} and {dh.mobs::%{_mob}%::xhigh}
+		add {_m} to attacker's balance
+		p_modifyXP(attacker, {_x})
+		{@rewardActionBar} is true
+		send action bar "&6+%{_m} ? 0%$  &3+%{_x} ? 0% Exp" to attacker
+	if {@itemRewards} is true:
+		loop indices of {dh.mobs::%{_mob}%::items::*}:
+			set {_c} to {dh.mobs::%{_mob}%::items::%loop-value%::chance}
+			chance of {_c}%:
+				add {dh.mobs::%{_mob}%::items::%loop-value%} to {_d::*}
+		give attacker {_d::*}
+		{@notifyItemReward} is true
+		loop {_d::*}:
+			send "&8+ %uncolored name of loop-value%" to attacker
