@@ -2,6 +2,14 @@
 # github.com/Zyhriz/skript-projects/
 
 
+options:
+	lehmer-seed: 65537 # The default seed. Can be modified by passing a number in the function
+
+	
+	# Only change these if you know what you're doing
+	lehmer-a: 16807
+	lehmer-m: 2147483647
+
 # map() function in processing; maps a number from one range to another
 function map(n: number, orgfrom: number, orgto: number, newfrom: number, newto: number) :: number:
 	set {_r} to ({_n} - {_orgfrom}) / ({_orgto} - {_orgfrom}) * ({_newto} - {_newfrom}) + {_newfrom}
@@ -31,4 +39,18 @@ function hamming(a: string, b: string) :: integer:
 	loop size of {_a} times:
 		{_a::%loop-number%} = {_b::%loop-number%}
 		add 1 to {_r}
+	return {_r}
+
+#jaro similarity. returns the similarity of 2 strings.
+#1 = exact match. 0 = no similarity.
+function jaro(a: string, b: string) :: number:
+	# TODO
+
+# lehmer random number algorithm. input a seed and it outputs a number
+function lehmer(seed: number = {@lehmer-seed}):
+	set {_r} to mod(lehmer({_seed} - 1)*{@lehmer-a}, {@lehmer-m})
+	return {_r}
+# a modified lehmer algorithm that isn't recursive. only use this if you're really limited on storage.
+function fast_lehmer(seed: number = {@lehmer-seed}):
+	set {_r} to mod({_seed}*{@lehmer-a}, {@lehmer-m})/{@lehmer-m}
 	return {_r}
