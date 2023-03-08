@@ -20,3 +20,15 @@ function lev(a: string, b: string) :: number:
 	if character 1 of {_a} = character 1 of {_b}:
 		return lev({_taila}, {_tailb})
 	return 1 + min(lev({_taila}, {_b}), lev({_a}, {_tailb}), lev({_taila}, {_tailb}))
+
+#hamming distance. returns the number of characters different between 2 strings *of the same length*
+#returns -1 if the strings are of different size
+function hamming(a: string, b: string) :: integer:
+	if length of {_a} isn't length of {_b}:
+		return -1
+	set {_a::*} to split {_a} at ""
+	set {_b::*} to split {_b} at ""
+	loop size of {_a} times:
+		{_a::%loop-number%} = {_b::%loop-number%}
+		add 1 to {_r}
+	return {_r}
