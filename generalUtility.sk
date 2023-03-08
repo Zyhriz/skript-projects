@@ -1,0 +1,22 @@
+# CREDIT GOES TO @zyhriz ON TIKTOK
+# github.com/Zyhriz/skript-projects/
+
+
+# map() function in processing; maps a number from one range to another
+function map(n: number, orgfrom: number, orgto: number, newfrom: number, newto: number) :: number:
+	set {_r} to ({_n} - {_orgfrom}) / ({_orgto} - {_orgfrom}) * ({_newto} - {_newfrom}) + {_newfrom}
+	return {_r}
+
+#levenshtein distance. returns the amount of insertions, deletions, or substitutions needed to convert one string to another
+function lev(a: string, b: string) :: number:
+	set {_la} to length of {_a}
+	set {_lb} to length of {_b}
+	set {_taila} to subtext of {_a} from character 2 to character {_la}
+	set {_tailb} to subtext of {_b} from character 2 to character {_lb}
+	if {_lb} = 0:
+		return {_la}
+	if {_la} = 0:
+		return {_lb}
+	if character 1 of {_a} = character 1 of {_b}:
+		return lev({_taila}, {_tailb})
+	return 1 + min(lev({_taila}, {_b}), lev({_a}, {_tailb}), lev({_taila}, {_tailb}))
