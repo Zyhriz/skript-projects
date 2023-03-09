@@ -75,6 +75,27 @@ function fast_lehmer(seed: number = {@lehmer-seed}):
 	set {_r} to mod({_seed}*{@lehmer-a}, {@lehmer-m})/{@lehmer-m}
 	return {_r}
 
+# returns the most common value in list {_forest}
+function boyer_moore(forest: objects) :: object:
+	set {_i} to 0
+	loop {_forest::*}:
+		if {_i} = 0:
+			set {_m} to loop-value
+			set {_i} to 1
+		else if {_m} = loop-value:
+			add 1 to {_i}
+		else:
+			subtract 1 from {_i}
+	return {_m}
+
+# euclid's algorithm for finding the gcd between two integers a and b.
+function euclid_gcd(a: integer, b: integer) :: integer: # [Check]
+	while b > 0:
+		set {_r} to mod({_a}, {_b})
+		set {_a} to {_b}
+		set {_b} to {_r}
+	return {_a}
+
 # returns all indices of a string within another
 function str_all_indicies(tree: string, forest: string) :: integers:
 	loop (size of {_forest} - size of {_tree}) times:
