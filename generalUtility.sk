@@ -75,6 +75,22 @@ function fast_lehmer(seed: number = {@lehmer-seed}):
 	set {_r} to mod({_seed}*{@lehmer-a}, {@lehmer-m})/{@lehmer-m}
 	return {_r}
 
+# returns all indices of a string within another
+function str_all_indicies(tree: string, forest: string) :: integers:
+	loop (size of {_forest} - size of {_tree}) times:
+		if subtext of {_forest} from character loop-number to character (loop-number + size of {_tree}) = {_tree}:
+			add loop-number to {_indices::*}
+	return {_indices::*}
+
+# returns all indices of an object within a list.
+function lst_all_indices(tree: object, forest: objects) :: objects:
+	loop indices of {_forest}:
+		if {_forest::%loop-value%} = {_tree}:
+			add loop-value to {_indices::*}
+	return {_indices::*}
+
+# GENERAL MATH FUNCTIONS
+
 # self explanatory; returns true if the number is prime
 function is_prime(n: integer) :: boolean:
 	if {_n} is less than 0:
@@ -83,3 +99,9 @@ function is_prime(n: integer) :: boolean:
 		mod({_n}, {_n} - loop-number) = 0
 		return false
 	return true
+
+# self explanatory; returns the factorial of the number
+function factorial(n: integer) :: integer:
+	if {_n} < 2:
+		return {_n}
+	return {_n} * factorial({_n} - 1)
