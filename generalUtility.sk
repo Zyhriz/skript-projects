@@ -41,10 +41,30 @@ function hamming(a: string, b: string) :: integer:
 		add 1 to {_r}
 	return {_r}
 
-#jaro similarity. returns the similarity of 2 strings.
+#jaro similarity, or jaro-winkler distance. returns the similarity of 2 strings.
 #1 = exact match. 0 = no similarity.
 function jaro(a: string, b: string) :: number:
-	# TODO
+	set {_al} to length of {_a}
+	set {_bl} to length of {_b}
+	set {_restriction} to floor(max({_al}, {_bl})/2) - 1
+	set {_a::*} to split {_a} at ""
+	set {_b::*} to split {_b} at ""
+	loop {_al} times:
+		set {_minrange} to max(1, loop-number - {_restriction})
+		set {_maxrange} to loop-number + {_restriction}
+		loop integers between {_minrange} and {_maxrange}:
+			set {_i} to loop-number-2
+			{_a::%loop-number-1%} = {_b::%{_i}%}
+			add 1 to {_m} # matching characters
+			if {_i} doesn't equal loop-number-1:
+				add 1 to {_t} # transpositions
+	if {_m} = 0:
+		return 0
+	set {_r} to (({_m}/{_al})+({_m}/{_bl})+(({_m}-{_t})/{_m}))/3
+	return {_r}
+		
+
+	# m = number of similar letters
 
 # lehmer random number algorithm. input a seed and it outputs a number
 function lehmer(seed: number = {@lehmer-seed}):
@@ -54,3 +74,12 @@ function lehmer(seed: number = {@lehmer-seed}):
 function fast_lehmer(seed: number = {@lehmer-seed}):
 	set {_r} to mod({_seed}*{@lehmer-a}, {@lehmer-m})/{@lehmer-m}
 	return {_r}
+
+# self explanatory; returns true if the number is prime
+function is_prime(n: integer) :: boolean:
+	if {_n} is less than 0:
+		return true
+	loop {_n} - 2 times:
+		mod({_n}, {_n} - loop-number) = 0
+		return false
+	return true
