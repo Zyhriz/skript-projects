@@ -89,6 +89,17 @@ function lst_all_indices(tree: object, forest: objects) :: objects:
 			add loop-value to {_indices::*}
 	return {_indices::*}
 
+# finds "tree" within a sorted list "forest"
+function binary_search(tree: number, forest: numbers): integer:
+	set {_mid} to ceil(size of {_forest::*}/2)
+	if {_tree} = {_forest::%{_mid}%}:
+		return {_tree}
+	else if {_tree} > {_forest::%{_mid}%}:
+		set {_t::*} to {_forest::%integers between {_mid} and size of {_forest::*}%}
+	else: # <
+		set {_t::*} to {_forest::%integers between 1 and {_mid}%}
+	return binary_search({_tree}, {_t::*})
+
 # GENERAL MATH FUNCTIONS
 
 # self explanatory; returns true if the number is prime
