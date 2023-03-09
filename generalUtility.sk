@@ -96,6 +96,22 @@ function euclid_gcd(a: integer, b: integer) :: integer: # [Check]
 		set {_b} to {_r}
 	return {_a}
 
+# binary exponentiation algorithm. faster exponents (O[log(n)])
+function fast_exp(n: number, k: integer) :: number:
+	if {_k} is less than 0:
+		set {_reciprocal} to true
+		set {_k} to {_k} * -1
+	while {_k} doesn't equal 0:
+		if mod({_k}, 2) = 0:
+			set {_n} to {_n} * {_n}
+			set {_k} to {_k} / 2
+		else:
+			set {_ans} to ({_ans} ? 1) * {_n}
+			set {_k} to {_k} - 1
+	if {_reciprocal} is true:
+		set {_ans} to 1 / {_ans}
+	return {_ans}
+
 # returns all indices of a string within another
 function str_all_indicies(tree: string, forest: string) :: integers:
 	loop (size of {_forest} - size of {_tree}) times:
