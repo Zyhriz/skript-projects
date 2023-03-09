@@ -96,7 +96,7 @@ function euclid_gcd(a: integer, b: integer) :: integer: # [Check]
 		set {_b} to {_r}
 	return {_a}
 
-# binary exponentiation algorithm. faster exponents (O[log(n)])
+# binary exponentiation algorithm. faster exponents (O[log2(n)])
 function fast_exp(n: number, k: integer) :: number:
 	if {_k} is less than 0:
 		set {_reciprocal} to true
