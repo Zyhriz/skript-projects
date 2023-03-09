@@ -105,3 +105,12 @@ function factorial(n: integer) :: integer:
 	if {_n} < 2:
 		return {_n}
 	return {_n} * factorial({_n} - 1)
+
+# returns the tetrated "a" "n" times; a^^n.
+function tetration(a: number, n: integer) :: number:
+	if {_n} < 0:
+		return NaN value # [Check]
+	if {_n} = 0:
+		return 1
+	set {_r} to {_a} ^ tetration({_a}, {_n} - 1)
+	return {_r}
