@@ -4,9 +4,6 @@
 
 options:
 	lehmer-seed: 65537 # The default seed. Can be modified by passing a number in the function
-
-	
-	# Only change these if you know what you're doing
 	lehmer-a: 16807
 	lehmer-m: 2147483647
 
@@ -25,7 +22,7 @@ function lev(a: string, b: string) :: number:
 		return {_la}
 	if {_la} = 0:
 		return {_lb}
-	if character 1 of {_a} = character 1 of {_b}:
+	if first character of {_a} is first character of {_b}:
 		return lev({_taila}, {_tailb})
 	return 1 + min(lev({_taila}, {_b}), lev({_a}, {_tailb}), lev({_taila}, {_tailb}))
 
@@ -36,7 +33,7 @@ function hamming(a: string, b: string) :: integer:
 		return -1
 	set {_a::*} to split {_a} at ""
 	set {_b::*} to split {_b} at ""
-	loop size of {_a} times:
+	loop size of {_a::*} times:
 		{_a::%loop-number%} = {_b::%loop-number%}
 		add 1 to {_r}
 	return {_r}
@@ -56,7 +53,7 @@ function jaro(a: string, b: string) :: number:
 			set {_i} to loop-number-2
 			{_a::%loop-number-1%} = {_b::%{_i}%}
 			add 1 to {_m} # matching characters
-			if {_i} doesn't equal loop-number-1:
+			if {_i} isn't loop-number-1:
 				add 1 to {_t} # transpositions
 	if {_m} = 0:
 		return 0
@@ -67,11 +64,13 @@ function jaro(a: string, b: string) :: number:
 	# m = number of similar letters
 
 # lehmer random number algorithm. input a seed and it outputs a number
-function lehmer(seed: number = {@lehmer-seed}):
+function lehmer(seed: number = {@lehmer-seed}) :: number:
+	if {_seed} is less than 1:
+    	return 1
 	set {_r} to mod(lehmer({_seed} - 1)*{@lehmer-a}, {@lehmer-m})
 	return {_r}
 # a modified lehmer algorithm that isn't recursive. only use this if you're really limited on storage.
-function fast_lehmer(seed: number = {@lehmer-seed}):
+function fast_lehmer(seed: number = {@lehmer-seed}) :: number:
 	set {_r} to mod({_seed}*{@lehmer-a}, {@lehmer-m})/{@lehmer-m}
 	return {_r}
 
@@ -90,7 +89,7 @@ function boyer_moore(forest: objects) :: object:
 
 # euclid's algorithm for finding the gcd between two integers a and b.
 function euclid_gcd(a: integer, b: integer) :: integer: # [Check]
-	while b > 0:
+	while {_b} > 0:
 		set {_r} to mod({_a}, {_b})
 		set {_a} to {_b}
 		set {_b} to {_r}
@@ -101,7 +100,7 @@ function fast_exp(n: number, k: integer) :: number:
 	if {_k} is less than 0:
 		set {_reciprocal} to true
 		set {_k} to {_k} * -1
-	while {_k} doesn't equal 0:
+	while {_k} isn't 0:
 		if mod({_k}, 2) = 0:
 			set {_n} to {_n} * {_n}
 			set {_k} to {_k} / 2
@@ -114,20 +113,20 @@ function fast_exp(n: number, k: integer) :: number:
 
 # returns all indices of a string within another
 function str_all_indicies(tree: string, forest: string) :: integers:
-	loop (size of {_forest} - size of {_tree}) times:
-		if subtext of {_forest} from character loop-number to character (loop-number + size of {_tree}) = {_tree}:
+	loop (length of {_forest} - length of {_tree}) times:
+		if (subtext of {_forest} from character loop-number to character (loop-number + length of {_tree})) is {_tree}:
 			add loop-number to {_indices::*}
 	return {_indices::*}
 
 # returns all indices of an object within a list.
 function lst_all_indices(tree: object, forest: objects) :: objects:
-	loop indices of {_forest}:
+	loop indices of {_forest::*}:
 		if {_forest::%loop-value%} = {_tree}:
 			add loop-value to {_indices::*}
 	return {_indices::*}
 
 # finds "tree" within a sorted list "forest"
-function binary_search(tree: number, forest: numbers): integer:
+function binary_search(tree: number, forest: numbers) :: integer:
 	set {_mid} to ceil(size of {_forest::*}/2)
 	if {_tree} = {_forest::%{_mid}%}:
 		return {_tree}
@@ -152,7 +151,9 @@ function is_prime(n: integer) :: boolean:
 function factorial(n: integer) :: integer:
 	if {_n} < 2:
 		return {_n}
-	return {_n} * factorial({_n} - 1)
+	set {_n1} to {_n} - 1 #i have to do this bc skript sucks
+	set {_r} to {_n} * factorial({_n1})
+	return {_r}
 
 # returns the tetrated "a" "n" times; a^^n.
 function tetration(a: number, n: integer) :: number:
@@ -160,7 +161,8 @@ function tetration(a: number, n: integer) :: number:
 		return NaN value # [Check]
 	if {_n} = 0:
 		return 1
-	set {_r} to {_a} ^ tetration({_a}, {_n} - 1)
+	set {_n} to {_n} - 1
+	set {_r} to {_a} ^ tetration({_a}, {_n})
 	return {_r}
 
 # returns the pentated "a" "n" times; a^^^n.
@@ -171,5 +173,6 @@ function pentation(a: number, n: integer) :: number:
 		return 1
 	# a ^ (a^^n-1)
 	# a ^^ (a^^^n-1)
-	set {_r} to tetration({_a}, pentation({_a}, {_n} - 1))
+	set {_n} to {_n} - 1
+	set {_r} to tetration({_a}, pentation({_a}, {_n}))
 	return {_r}
