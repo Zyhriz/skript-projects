@@ -1,0 +1,39 @@
+options:
+	prefix: &6chat&e
+	chat-format: %player's prefix%&e%player's display name%%player's suffix%: &f%colored message%
+	join-format: &2 + %player%
+	welcome-format: &a * %player%
+	quit-format: &8 - %player%
+	metadatatag: sk.chat
+	#permission stuff
+	permission-message: &cInsufficient permission.
+	#specific command stuff
+	nick-permission: chat.nick
+	nick-max-length: 30 #characters
+	mute-chat-permission: chat.muteall
+	mute-chat-speak-permission: chat.muteall.bypass
+	mute-chat-message: &cHey! &7Chat is currently muted.
+
+join:
+	set join message to "{@join-format}"
+
+first join:
+	set join message to "{@welcome-format}"
+
+quit:
+	set quit message to "{@quit-format}"
+
+on chat:
+	set chat format to "{@chat-format}"
+
+command /nick [<text>]:
+	permission: {@nick-permission}
+	permission message: {@permission-message}
+	trigger:
+		if arg is set:
+			set player's display name to colored subtext of arg from character 1 to character {@nick-max-length}
+			send "{@prefix} Nickname successfully set to %player's display name%."
+		else:
+			set {_gui} to chest inventory with 2 rows named "&9 - &bSet a Nickname Color &9- "
+			set metadata tag "{@metadatatag}nick" of player to {_gui}
+			open metadata tag "{@metadatatag}nick" of player to player
