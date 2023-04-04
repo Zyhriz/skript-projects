@@ -1,4 +1,19 @@
 #handles scoreboard, tab
-# REQUIRES SKRIPT-REFLECT
+# REQUIRES SKRIPT-REFLECT, VAULT
 # CREDIT TO @Zyhriz
 # github.com/Zyhriz/skript-projects/
+
+options:
+	handle-tab: true
+	handle-scoreboard: true
+
+import:
+	org.bukkit.Bukkit
+	org.bukkit.scoreboard.Scoreboard
+	org.bukkit.scoreboard.ScoreboardManager
+
+function initializeScoreboard(p: player):
+	set {_m} to Bukkit.getScoreboardManager()
+	set {_board} to {_m}.getNewScoreboard()
+	
+	{_p}.setScoreboard({_board})
