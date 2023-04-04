@@ -1,3 +1,6 @@
+# CREDIT TO @Zyhriz
+# github.com/Zyhriz/skript-projects/
+
 options:
 	prefix: &6chat&e
 	chat-format: %player's prefix%&e%player's display name%%player's suffix%: &f%colored message%
