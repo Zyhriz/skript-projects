@@ -1,0 +1,5 @@
+options:
+	chat-format: "&c%player's prefix% %player% %player's suffix%&f %colored message%"
+
+on chat:
+	set chat format to {@chat-format}
