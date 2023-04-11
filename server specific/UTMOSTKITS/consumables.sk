@@ -1,18 +1,19 @@
 options:
 	prefix: &b&lUT&9&lMOST&d&lKITS&c
 	consumption-messages: true
+	infinite-consumables: false
 
 # CONSUMPTION ==========
 
 right click with sugar:
 	uncolored name of player's tool is "ᴜᴛᴍᴏsᴛ sᴘᴇᴇᴅ"
-	remove 1 of player's tool from player
+	remove 1 of player's tool from player if {@infinite-consumables} is false
 	apply speed without particles to player for 15 seconds
 	send "{@prefix} &oThe wind lifts your feet." if {@consumption-messages} is true
 
 right click with sugar:
 	uncolored name of player's tool is "ᴜᴛᴍᴏsᴛ sᴛʀᴇɴɢᴛʜ"
-	remove 1 of player's tool from player
+	remove 1 of player's tool from player if {@infinite-consumables} is false
 	apply strength 2 without particles to player for 5 seconds
 	send "{@prefix} &oYou feel stronger." if {@consumption-messages} is true
 
@@ -20,7 +21,7 @@ right click with sugar:
 
 right click with red candle:
 	uncolored name of player's tool is "ᴅʏɴᴀᴍɪᴛᴇ"
-	remove 1 of player's tool from player
+	remove 1 of player's tool from player if {@infinite-consumables} is false
 	shoot tnt from player at speed 2
 
 on explode:
