@@ -8,4 +8,10 @@ death:
       - "&b[victim] &7was killed by &a[attacker]&7!"
       - "&b[victim] &7was slain by &a[attacker]&7!"
       - "&b[victim] &7died at the hands of &a[attacker]&7!"
-  
+  placeholder:
+    - "&b[victim] &7fizzled out of existence."
+    - "&b[victim] &7vanished."
+    - "&b[victim] &7did a disappearing act!"
+    - "&b[victim] &7poofed."
+    - "&7Missing posters were set out for &b[victim]&7."
+    - "&b[victim] &7moved through the 4th dimension."
