@@ -19,7 +19,8 @@ death of player:
 			set death message to pv_pullMessage("death", "pvp.set")
 		else:
 			set death message to pv_pullMessage("death", "pvp.unset")
-	set death message to pv_pullMessage("death", damage cause)
+	else:
+		set death message to pv_pullMessage("death", damage cause)
 	# death message fixing:
 	replace all "[victim]" in death message with name of victim
 	replace all "[attacker]" in death message with name of attacker
