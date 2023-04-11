@@ -21,7 +21,7 @@ right click with sugar:
 right click with red candle:
 	uncolored name of player's tool is "ᴅʏɴᴀᴍɪᴛᴇ"
 	remove 1 of player's tool from player
-	shoot 1 tnt from player at speed 2
+	shoot tnt from player at speed 2
 
 on explode:
 	event-entity is tnt
