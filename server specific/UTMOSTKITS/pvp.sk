@@ -3,7 +3,7 @@ options:
 	console-logging: 3
 	# console-logging priorities:
 	# 1: sending literally everything
-	# 2: avoids debug messages and otherwise unnecessary info
+	# 2: avoids pointless messages and otherwise unnecessary info
 	# 3: only sends error messages
 	# 4: disabled
 	console-prefix: [PVP.SK]
@@ -14,7 +14,14 @@ function pv_consoleLog(m: string, priority: integer = 1):
 	{@console-logging} is greater than or equal to {_priority}
 	send "{@console-prefix} %{_m}%" to console
 
+function pv_verifyFile():
+	if file "{@file}" doesn't exist:
+		pv_consoleLog("File {@file} doesn't exist! Creating one now.", 3)
+		create file "{@file}"
+		pv_consoleLog("Done!", 3)
+		pv_reloadYaml()
+
 function pv_reloadYaml():
-	pv_consoleLog("Reloading the yaml file, this might take a bit...")
+	pv_consoleLog("Reloading the yaml file, this might take a bit...", 2)
 	load yaml "{@file}" as "db"
-	pv_consoleLog("Done!")
+	pv_consoleLog("Done!", 2)
