@@ -37,7 +37,7 @@ function pv_verifyFile():
 		pv_consoleLog("File {@file} doesn't exist! Creating one now.", 3)
 		create file "{@file}"
 		pv_consoleLog("Done!", 3)
-		pv_reloadYaml()
+	pv_reloadYaml()
 
 function pv_reloadYaml():
 	pv_consoleLog("Loading the yaml file, this might take a bit...", 2)
