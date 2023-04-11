@@ -1,5 +1,16 @@
 options:
+	prefix: &b&lUT&9&lMOST&d&lKITS&c&o
 	chat-format: "&c%player's prefix%%player's display name%%player's suffix%&f %colored message%"
+	permission-message: &cInsufficient permission.
+	max-nick-length: 40
 
 on chat:
 	set chat format to {@chat-format}
+
+command /nick <text>:
+	usage: &c/nick [new-nickname]
+	permission: sk.nick
+	permission message: {@permission-message}
+	trigger:
+		set player's display name to subtext of arg from character 1 to character min(length of arg, {@max-nick-length})
+		send "{@prefix} Done!"
