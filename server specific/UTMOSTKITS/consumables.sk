@@ -7,13 +7,13 @@ options:
 right click with sugar:
 	uncolored name of player's tool is "ᴜᴛᴍᴏsᴛ sᴘᴇᴇᴅ"
 	remove 1 of player's tool from player
-	apply speed to player for 15 seconds without particles
+	apply speed without particles to player for 15 seconds
 	send "{@prefix} &oThe wind lifts your feet." if {@consumption-messages} is true
 
 right click with sugar:
 	uncolored name of player's tool is "ᴜᴛᴍᴏsᴛ sᴛʀᴇɴɢᴛʜ"
 	remove 1 of player's tool from player
-	apply strength 2 to player for 5 seconds without particles
+	apply strength 2 without particles to player for 5 seconds
 	send "{@prefix} &oYou feel stronger." if {@consumption-messages} is true
 
 # dynamite
@@ -21,7 +21,7 @@ right click with sugar:
 right click with red candle:
 	uncolored name of player's tool is "ᴅʏɴᴀᴍɪᴛᴇ"
 	remove 1 of player's tool from player
-	shoot 1 tnt from player with force 2
+	shoot 1 tnt from player at speed 2
 
 on explode:
 	event-entity is tnt
