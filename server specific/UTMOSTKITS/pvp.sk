@@ -1,0 +1,20 @@
+options:
+	file: plugins/Skript/Databases/pvp.yaml
+	console-logging: 3
+	# console-logging priorities:
+	# 1: sending literally everything
+	# 2: avoids debug messages and otherwise unnecessary info
+	# 3: only sends error messages
+	# 4: disabled
+	console-prefix: [PVP.SK]
+
+# UTILS =====================
+
+function pv_consoleLog(m: string, priority: integer = 1):
+	{@console-logging} is greater than or equal to {_priority}
+	send "{@console-prefix} %{_m}%" to console
+
+function pv_reloadYaml():
+	pv_consoleLog("Reloading the yaml file, this might take a bit...")
+	load yaml "{@file}" as "db"
+	pv_consoleLog("Done!")
