@@ -8,6 +8,23 @@ options:
 	# 4: disabled
 	console-prefix: [PVP.SK]
 
+# EVENTS ====================
+
+on load:
+	pv_verifyFile()
+
+death of player:
+	if attacker is a player:
+		if name of attacker's tool is set:
+			set death message to pv_pullMessage("death", "pvp.set")
+		else:
+			set death message to pv_pullMessage("death", "pvp.unset")
+	set death message to pv_pullMessage("death", damage cause)
+	# death message fixing:
+	replace all "[victim]" in death message with name of victim
+	replace all "[attacker]" in death message with name of attacker
+	replace all "[tool.attacker]" in death message with name of attacker's tool
+
 # UTILS =====================
 
 function pv_consoleLog(m: string, priority: integer = 1):
@@ -25,3 +42,11 @@ function pv_reloadYaml():
 	pv_consoleLog("Loading the yaml file, this might take a bit...", 2)
 	load yaml "{@file}" as "db"
 	pv_consoleLog("Done!", 2)
+
+function pv_pullMessage(g: string, p: string) :: string:
+	pv_verifyFile()
+	set {_ms::*} to yaml list "%{_g}%.%{_p}%" of "db"
+	if {_ms::1} isn't set:
+		set {_ms::*} to yaml list "%{_g}%.placeholder" of "db"
+	set {_m} to random element out of {_ms::*}
+	return {_m}

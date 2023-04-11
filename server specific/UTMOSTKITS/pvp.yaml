@@ -1,0 +1,11 @@
+death:
+  pvp:
+    set:
+      - "&b[victim] &7was killed by &a[attacker] &7using [tool.attacker]!"
+      - "&b[victim] &7was slain by &a[attacker] &7using [tool.attacker]!"
+      - "&b[victim] &7died at the hands of &a[attacker] &7using [tool.attacker]!"
+    unset:
+      - "&b[victim] &7was killed by &a[attacker]&7!"
+      - "&b[victim] &7was slain by &a[attacker]&7!"
+      - "&b[victim] &7died at the hands of &a[attacker]&7!"
+  
