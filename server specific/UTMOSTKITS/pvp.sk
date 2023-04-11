@@ -41,7 +41,7 @@ function pv_verifyFile():
 
 function pv_reloadYaml():
 	pv_consoleLog("Loading the yaml file, this might take a bit...", 2)
-	load yaml file "{@file}" as "db"
+	load yaml "{@file}" as "db"
 	pv_consoleLog("Done!", 2)
 
 function pv_pullMessage(g: string, p: string) :: string:
