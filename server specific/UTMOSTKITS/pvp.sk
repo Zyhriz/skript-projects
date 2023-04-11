@@ -22,6 +22,6 @@ function pv_verifyFile():
 		pv_reloadYaml()
 
 function pv_reloadYaml():
-	pv_consoleLog("Reloading the yaml file, this might take a bit...", 2)
+	pv_consoleLog("Loading the yaml file, this might take a bit...", 2)
 	load yaml "{@file}" as "db"
 	pv_consoleLog("Done!", 2)
