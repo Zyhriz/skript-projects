@@ -11,7 +11,7 @@ options:
 # UTILS =====================
 
 function pv_consoleLog(m: string, priority: integer = 1):
-	{@console-logging} is greater than or equal to {_priority}
+	{@console-logging} is less than or equal to {_priority}
 	send "{@console-prefix} %{_m}%" to console
 
 function pv_verifyFile():
