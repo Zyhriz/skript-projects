@@ -8,6 +8,36 @@ death:
       - "&b[victim] &7was killed by &a[attacker]&7!"
       - "&b[victim] &7was slain by &a[attacker]&7!"
       - "&b[victim] &7died at the hands of &a[attacker]&7!"
+  # contact is stuff like prickling and crushing
+  contact:
+    - "&b[victim] &7didn't socially distance!"
+  projectile:
+    - "&b[victim] &7was shot!"
+    - "&7An american exercised their rights on &b[victim]&7!"
+    - "&7Something whizzed through &b[victim]&7!"
+  suffocation:
+    - "&b[victim] &7couldn't breathe."
+    - "&b[victim] &7ran out of oxygen."
+    - "&b[victim] &7took it a little too deep."
+  fall:
+    - "&b[victim] &7fell to their doom!"
+    - "&b[victim] &7experienced about 9.8m^2/s of force!"
+    - "&b[victim] &7went splat!"
+  fire:
+    - "&b[victim] &7discovered fire!"
+  lava:
+    - "&b[victim] &7plunged their right arm into lava!"
+  entity explosion:
+    - "&b[victim] &7exploded!"
+    - "&b[victim] &7went kaboom!"
+    - "&b[victim] &7discovered gunpowder!"
+  suicide:
+    - "&b[victim] &7couldn't take it anymore."
+    - "&b[victim] &7grabbed the rope."
+    - "&b[victim] &7kicked the bucket."
+    - "&b[victim] &7had enough."
+  thorns:
+    - "&b[victim] &7was pricked to death."
   placeholder:
     - "&b[victim] &7fizzled out of existence."
     - "&b[victim] &7vanished."
