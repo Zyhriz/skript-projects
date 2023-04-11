@@ -25,6 +25,7 @@ death of player:
 	replace all "[victim]" in death message with name of victim
 	replace all "[attacker]" in death message with name of attacker
 	replace all "[tool.attacker]" in death message with name of attacker's tool
+	set death message to colored death message
 
 # UTILS =====================
 
