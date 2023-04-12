@@ -1,6 +1,7 @@
 options:
 	prefix: &b&lUT&9&lMOST&d&lKITS&c&o
 	chat-format: "&c%player's prefix%%player's display name%%player's suffix%&f %colored message%"
+	staff-chat-format: "&c[S] &f%{_p}% &8// &f%colored {_msg}%"
 	permission-message: &cInsufficient permission.
 	max-nick-length: 40
 
@@ -14,3 +15,21 @@ command /nick <text>:
 	trigger:
 		set player's display name to subtext of arg from character 1 to character min(length of arg, {@max-nick-length})
 		send "{@prefix} Done!"
+
+command /staffchat [<text>]:
+	aliases: /st, /sc
+	permission: sk.staffchat
+	permission message: {@permission-message}
+	trigger:
+		if arg isn't set:
+			set metadata tag "{@metadata}staff" of player to true if metadata tag "{@metadata}staff" of player isn't true else false
+			send "{@prefix} Staffchat is now set to %metadata tag "{@metadata}staff" of player%"
+		else:
+			chat_sendStaffMessage(player, arg)
+
+# FUNCTIONS ======================
+
+function chat_sendStaffMessage(P: player, msg: string):
+	loop all players:
+		loop-player has permission "sk.staffchat"
+		send {@staff-chat-format} to loop-player
