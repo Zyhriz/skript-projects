@@ -2,15 +2,29 @@ options:
 	prefix: &b&lUT&9&lMOST&d&lKITS&c&o
 	chat-format: "&c%player's prefix%%player's display name%%player's suffix%&f %colored message%"
 	staff-chat-format: "&c[S] &f%{_p}% &8// &f%colored {_msg}%"
+	welcome-message: " &e* %player%"
+	join-message: " &2+ %player%"
+	quit-message: "" # leave blank to remove
 	permission-message: &cInsufficient permission.
 	max-nick-length: 40
 	metadata: chatsk
+
+# EVENTS =========================
 
 on chat:
 	set chat format to {@chat-format}
 	metadata tag "{@metadata}staff" of player is true
 	cancel event
 	chat_sendStaffMessage(player, message)
+
+join:
+	set join message to {@join-message}
+first join:
+	set join message to {@welcome-message}
+quit:
+	set quit message to {@quit-message}
+
+# COMMANDS =======================
 
 command /nick <text>:
 	usage: &c/nick [new-nickname]
