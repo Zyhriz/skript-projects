@@ -4,9 +4,13 @@ options:
 	staff-chat-format: "&c[S] &f%{_p}% &8// &f%colored {_msg}%"
 	permission-message: &cInsufficient permission.
 	max-nick-length: 40
+	metadata: chatsk
 
 on chat:
 	set chat format to {@chat-format}
+	metadata tag "{@metadata}staff" of player is true
+	cancel event
+	chat_sendStaffMessage(player, message)
 
 command /nick <text>:
 	usage: &c/nick [new-nickname]
