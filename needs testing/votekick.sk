@@ -24,7 +24,7 @@ command /votekick <player> <text>:
 		delete {-votekick}
 		if size of {-vk.votes::*} is greater than or equal to 0.75*size of online players:
 			broadcast "{@prefix} The vote has concluded, and %arg-1% will be kicked."
-			kick arg-1 for reason "Votekick."
+			kick arg-1 by reason of "Votekick."
 		else:
 			broadcast "{@prefix} The vote has concluded, and %arg-1% will not be kicked."
 
