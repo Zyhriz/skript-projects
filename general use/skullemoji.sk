@@ -1,0 +1,3 @@
+#pointless file shouldnt even exist
+on chat:
+  replace all ":skull:" in message with "☠"
