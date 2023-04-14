@@ -1,0 +1,43 @@
+options:
+	prefix: &cVK&7
+	timer: 1 minute
+	permission: group.default
+	permission-message: &cInsufficient permission.
+	usage: &c/votekick [player] [reason]
+
+on load:
+	delete {-votekick}
+
+command /votekick <player> <text>:
+	usage: {@usage}
+	permission: {@permission}
+	permission message: {@permission-message}
+	trigger:
+		if {-votekick} is set:
+			send "{@prefix} A vote is currently ongoing."
+			stop
+		set {-votekick} to arg-1
+		broadcast "{@prefix} %player% is petitioning to votekick %arg-1% for reason ""%arg-2%""."
+		broadcast "{@prefix} Use /vk [yes|no] to vote."
+		broadcast "{@prefix} This vote will end in {@timer}."
+		wait {@timer}
+		delete {-votekick}
+		if size of {-vk.votes::*} is greater than or equal to 0.75*size of online players:
+			broadcast "{@prefix} The vote has concluded, and %arg-1% will be kicked."
+			kick arg-1 for reason "Votekick."
+		else:
+			broadcast "{@prefix} The vote has concluded, and %arg-1% will not be kicked."
+
+command /vk <text>:
+	usage: &c/vk [yes|no|y|n]
+	permission: {@permission}
+	permission message: {@permission-message}
+	trigger:
+		if {-vk.votes::*} contains player:
+			remove player from {-vk.votes::*}
+		if arg is "yes" or "y":
+			add player to {-vk.votes::*}
+			send "{@prefix} Successfully voted to kick %{-votekick}%."
+		else if arg is "no" or "n":
+			remove player from {-vk.votes::*}
+			send "{@prefix} Retracted your vote to kick %{-votekick}%."
