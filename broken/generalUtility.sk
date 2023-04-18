@@ -1,12 +1,6 @@
 # CREDIT GOES TO @zyhriz ON TIKTOK
 # github.com/Zyhriz/skript-projects/
 
-
-options:
-	lehmer-seed: 65537 # The default seed. Can be modified by passing a number in the function
-	lehmer-a: 16807
-	lehmer-m: 2147483647
-
 # map() function in processing; maps a number from one range to another
 function map(n: number, orgfrom: number, orgto: number, newfrom: number, newto: number) :: number:
 	set {_r} to ({_n} - {_orgfrom}) / ({_orgto} - {_orgfrom}) * ({_newto} - {_newfrom}) + {_newfrom}
@@ -63,16 +57,20 @@ function jaro(a: string, b: string) :: number:
 
 	# m = number of similar letters
 
-# lehmer random number algorithm. input a seed and it outputs a number
-function lehmer(seed: number = {@lehmer-seed}) :: number:
-	if {_seed} is less than 1:
-    	return 1
-	set {_r} to mod(lehmer({_seed} - 1)*{@lehmer-a}, {@lehmer-m})
+# wichmann-hill random number generator, must be seeded first
+function wichmann() :: number:
+	set {genu.wichmann.s1} to mod(171 * {genu.wichmann.s1}, 30269)
+	set {genu.wichmann.s2} to mod(172 * {genu.wichmann.s2}, 30307)
+	set {genu.wichmann.s3} to mod(170 * {genu.wichmann.s3}, 30323)
+	set {_r} to mod({genu.wichmann.s1}/30269 + {genu.wichmann.s2}/30307 + {genu.wichmann.s3}/30323, 1)
 	return {_r}
-# a modified lehmer algorithm that isn't recursive. only use this if you're really limited on storage.
-function fast_lehmer(seed: number = {@lehmer-seed}) :: number:
-	set {_r} to mod({_seed}*{@lehmer-a}, {@lehmer-m})/{@lehmer-m}
-	return {_r}
+
+# seeding function for wichmann-hill random number generator
+# note: the wichmann random number generator requires 3 seeds
+function wichmann_seed(s1: number, s2: number, s3: number):
+	set {genu.wichmann.s1} to mod({genu.wichmann.s2}, 30000)
+	set {genu.wichmann.s2} to mod({genu.wichmann.s2}, 30000)
+	set {genu.wichmann.s3} to mod({genu.wichmann.s3}, 30000)
 
 # returns the most common value in list {_forest}
 function boyer_moore(forest: objects) :: object:
