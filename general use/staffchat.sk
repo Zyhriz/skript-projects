@@ -1,0 +1,23 @@
+options:
+	permission: sk.staffchat
+	prefix: &c&lSTAFF&f
+	metadata: sk.staff #dont change if you dont know what you're doing.
+
+function staff_sendMessage(p: player, m: text):
+	loop all players: #i'd use where, but it takes longer to parse
+		loop-player has permission "{@permission}" #faster than inlines
+		send "{@prefix} %{_p}% &8>> &f%{_m}%" to loop-player
+
+command /staffchat [<text>]:
+	permission: {@permission}
+	trigger:
+		if arg is set:
+			staff_sendMessage(player, arg)
+			stop
+		set metadata tag "{@metadata}" of player to true if metadata tag "{@metadata}" of player isn't true else false
+		send "{@prefix} Staffchat now set to %metadata tag "{@metadata}" of player%."
+
+on chat:
+	metadata tag "{@metadata}" of player is true
+	cancel event
+	staff_sendMessage(player, message)
