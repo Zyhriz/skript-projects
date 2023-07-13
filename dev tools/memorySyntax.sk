@@ -1,5 +1,7 @@
 # requires skript-reflect
 # CODE BY ZYHRIZ. DO NOT REMOVE THIS INFO
+# Allows you to check your server's memory stats (free/max/used) **without SkUtilities**.
+# Make sure this file is loaded before any other file that relies upon it.
 
 import:
 	java.lang.Runtime
@@ -28,8 +30,3 @@ expression percent[age][ of [the ][server['s] ](memory|ram)] free[d]:
 	get:
 		set {_p} to free memory/max memory
 		return {_p}
-
-function broadcastStats():
-	broadcast "&5Max RAM: %max ram%"
-	broadcast "&dFree RAM: %free ram%"
-	broadcast "&bUsed RAM: %used ram%"
