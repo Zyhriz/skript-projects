@@ -1,0 +1,17 @@
+# requires skript-reflect
+# CODE BY ZYHRIZ. DO NOT REMOVE THIS INFO
+
+import:
+	org.bukkit.ChatColor
+
+function encodeString(string: string) :: string:
+	set {_char} to ChatColor.COLOR_CHAR
+	set {_characters::*} to split {_string} at ""
+	loop {_characters::*}:
+		set {_newString} to "%{_newString} ? ""%%loop-value%%{_char}%"
+	return "%{_char}%%{_newString}%"
+
+function decodeString(string: string) :: string:
+	set {_newString} to {_string}
+	replace all "%ChatColor.COLOR_CHAR%" in {_newString} with ""
+	return {_newString}
